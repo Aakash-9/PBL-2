@@ -1,0 +1,48 @@
+# yaml/join_path_specification.yaml
+
+core_paths:
+  orders_to_items:
+    from: orders
+    to: order_items
+    condition: "o.order_id = oi.order_id"
+
+  items_to_products:
+    from: order_items
+    to: products
+    condition: "oi.product_id = p.product_id"
+
+  items_to_sellers:
+    from: order_items
+    to: sellers
+    condition: "oi.seller_id = s.seller_id"
+
+  orders_to_customers:
+    from: orders
+    to: customers
+    condition: "o.customer_id = c.customer_id"
+
+  orders_to_payments:
+    from: orders
+    to: payments
+    condition: "o.order_id = pay.order_id"
+
+  orders_to_shipments:
+    from: orders
+    to: shipments
+    condition: "o.order_id = sh.order_id"
+
+  returns_to_items:
+    from: returns
+    to: order_items
+    condition: "ret.order_item_id = oi.order_item_id"
+
+enforced_rules:
+  - "Never join sellers directly from orders — always via order_items"
+  - "Never join warehouses directly from orders — always via shipments"
+  - "Never join refunds without going through returns table first"
+  - "Never join settlements without going through order_items"
+  - "Always use table aliases: orders=o, order_items=oi, products=p, sellers=s, customers=c, payments=pay, returns=ret, shipments=sh"
+  - "ALWAYS use LEFT JOIN for returns table — NEVER use INNER JOIN/JOIN for returns"
+  - "For revenue lost from returns, use ret.refund_amount from returns table — NOT from refunds table"
+  - "Always show seller_name by joining sellers via order_items — never show raw seller_id"
+  - "Always show customer city/name by joining customers — never show raw customer_id"

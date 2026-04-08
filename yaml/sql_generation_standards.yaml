@@ -1,0 +1,21 @@
+# yaml/sql_generation_standards.yaml
+
+rules:
+  - "Always use explicit JOIN ... ON ... syntax, never implicit comma joins"
+  - "Never use SELECT * — always select explicit column names"
+  - "COALESCE all aggregated columns to handle NULLs safely"
+  - "GROUP BY all non-aggregated columns that appear in SELECT"
+  - "ORDER BY the primary metric column DESC"
+  - "Use LIMIT 1000 for all queries unless a specific limit is requested"
+  - "Use snake_case for all column and table references"
+  - "Wrap all date comparisons using >= and < for range queries"
+  - "Use DISTINCT inside COUNT() when counting unique entities"
+  - "Never use subqueries when a JOIN achieves the same result"
+  - "Use CTEs (WITH clause) for multi-step logic to improve readability"
+  - "Always cast numeric divisions with ::float or use NULLIF to avoid division by zero"
+  - "ALWAYS use LEFT JOIN for returns — NEVER INNER JOIN returns or return_rate will always be 100%"
+  - "For revenue lost, use ret.refund_amount from returns table directly"
+  - "Always show seller_name not seller_id — join sellers s ON oi.seller_id = s.seller_id"
+  - "Payment mode values in DB are only COD and Prepaid — never use Online, UPI, Card"
+  - "For month-based dynamic intervals use date_trunc: o.order_date >= date_trunc('month', current_date - interval 'N months')"
+  - "Never interpret time words (last, this, next) as city names in WHERE clauses"

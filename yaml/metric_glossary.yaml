@@ -1,0 +1,73 @@
+# yaml/metric_glossary.yaml
+# Business metric definitions for the RAG engine
+# Each metric maps to tables, filters, and aggregation logic
+
+quantity_sold:
+  description: Total units sold across delivered and shipped orders
+  formula_logic:
+    filter: "order_status IN ('Delivered', 'Shipped')"
+    aggregation: "SUM(oi.quantity)"
+  tables: [orders, order_items]
+
+gmv:
+  description: Gross Merchandise Value — total revenue from delivered and shipped orders
+  formula_logic:
+    filter: "order_status IN ('Delivered', 'Shipped')"
+    aggregation: "SUM(oi.item_price)"
+  tables: [orders, order_items]
+
+revenue_net:
+  description: Net revenue after subtracting returns and refunds
+  formula_logic:
+    filter: "order_status IN ('Delivered', 'Shipped')"
+    aggregation: "SUM(oi.item_price) - COALESCE(SUM(ret.refund_amount), 0)"
+  tables: [orders, order_items, returns]
+
+order_count:
+  description: Total number of orders placed
+  formula_logic:
+    filter: "order_status != 'Cancelled'"
+    aggregation: "COUNT(DISTINCT o.order_id)"
+  tables: [orders]
+
+return_rate:
+  description: Percentage of order items that were returned
+  formula_logic:
+    filter: ""
+    aggregation: "COUNT(ret.return_id) * 100.0 / NULLIF(COUNT(oi.order_item_id), 0)"
+  tables: [order_items, returns]
+
+avg_order_value:
+  description: Average value per order (AOV)
+  formula_logic:
+    filter: "order_status IN ('Delivered', 'Shipped')"
+    aggregation: "SUM(oi.item_price) / NULLIF(COUNT(DISTINCT o.order_id), 0)"
+  tables: [orders, order_items]
+
+active_sellers:
+  description: Count of sellers who had at least one delivered order
+  formula_logic:
+    filter: "order_status = 'Delivered'"
+    aggregation: "COUNT(DISTINCT oi.seller_id)"
+  tables: [orders, order_items]
+
+customer_count:
+  description: Count of unique customers who placed orders
+  formula_logic:
+    filter: "order_status != 'Cancelled'"
+    aggregation: "COUNT(DISTINCT o.customer_id)"
+  tables: [orders]
+
+inventory_low:
+  description: Number of products with low stock (less than 10 units)
+  formula_logic:
+    filter: "quantity_available < 10"
+    aggregation: "COUNT(*)"
+  tables: [inventory]
+
+delivery_time_avg:
+  description: Average days between order placement and delivery
+  formula_logic:
+    filter: "order_status = 'Delivered'"
+    aggregation: "AVG(EXTRACT(DAY FROM sh.delivery_date - o.order_date))"
+  tables: [orders, shipments]

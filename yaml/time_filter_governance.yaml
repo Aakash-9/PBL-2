@@ -1,0 +1,41 @@
+# yaml/time_filter_governance.yaml
+
+time_filters:
+  today:
+    sql: "o.order_date >= current_date AND o.order_date < current_date + interval '1 day'"
+
+  yesterday:
+    sql: "o.order_date >= current_date - interval '1 day' AND o.order_date < current_date"
+
+  last_7_days:
+    sql: "o.order_date >= current_date - interval '7 days'"
+
+  last_30_days:
+    sql: "o.order_date >= current_date - interval '30 days'"
+
+  this_month:
+    sql: "date_trunc('month', o.order_date) = date_trunc('month', current_date)"
+
+  last_month:
+    sql: "date_trunc('month', o.order_date) = date_trunc('month', current_date - interval '1 month')"
+
+  this_year:
+    sql: "date_trunc('year', o.order_date) = date_trunc('year', current_date)"
+
+  last_quarter:
+    sql: "o.order_date >= date_trunc('quarter', current_date - interval '3 months') AND o.order_date < date_trunc('quarter', current_date)"
+
+  last_3_months:
+    sql: "o.order_date >= current_date - interval '3 months'"
+
+  last_6_months:
+    sql: "o.order_date >= current_date - interval '6 months'"
+
+  last_90_days:
+    sql: "o.order_date >= current_date - interval '90 days'"
+
+  last_180_days:
+    sql: "o.order_date >= current_date - interval '180 days'"
+
+  last_year:
+    sql: "o.order_date >= current_date - interval '1 year'"
