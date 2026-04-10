@@ -36,6 +36,7 @@ def compute(rows: list[dict], metric_info: dict | None = None) -> dict:
 
         if values:
             total = round(sum(values), 2)
+            sorted_rows = []
 
             # Top contributors only meaningful when there are multiple labelled rows
             if label_col and len(rows) > 1:
@@ -60,7 +61,7 @@ def compute(rows: list[dict], metric_info: dict | None = None) -> dict:
                 top_val = max(values)
                 rest_avg = (sum(values) - top_val) / (len(values) - 1)
                 if rest_avg > 0 and top_val > rest_avg * 3:
-                    top_label = sorted_rows[0].get(label_col, "unknown") if label_col else "unknown"
+                    top_label = sorted_rows[0].get(label_col, "unknown") if sorted_rows and label_col else "unknown"
                     anomaly = f"{top_label} is an outlier — {round(top_val / rest_avg, 1)}x above average"
 
     return {

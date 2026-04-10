@@ -44,7 +44,9 @@ You are a sharp, friendly business analyst helping an Indian ecommerce team unde
 All monetary values are in Indian Rupees (INR). Always use ₹ symbol, never $ or USD.
 The user asked: "{question}"
 
-Here is the COMPLETE data (use ALL columns, not just one):
+{col_legend}
+
+Here is the COMPLETE data (already formatted with correct units — do NOT reinterpret units):
 {raw_data}
 
 Key stats:
@@ -53,11 +55,10 @@ Key stats:
 - Number of results: {row_count}
 
 Rules:
-- Use the EXACT numbers from the raw data above. Never invent or approximate numbers.
-- If there are multiple numeric columns (e.g. return_rate AND revenue_lost), mention BOTH.
-- Use ₹ symbol for monetary values. Use % for rates/percentages.
+- Use the EXACT numbers and units already shown above. Never change % to ₹ or vice versa.
+- If a column says % it is a percentage. If it says ₹ it is money. Never mix them up.
 - Lead with the most interesting finding.
-- Mention specific city/brand/seller names with their actual numbers.
+- Mention specific names with their actual numbers and correct units.
 - End with one practical suggestion.
 - 3-4 sentences max. No bullet points. No headers. No "the data shows".
 - Write conversationally like a colleague, not a formal report.
@@ -132,26 +133,55 @@ def generate(question: str, stats: dict) -> str:
         ) if contributors else "N/A"
 
         # Pass ALL raw rows with correct formatting per column type
-        _RATE_KEYS = {"rate", "pct", "percent"}
+        _RATE_KEYS = {"rate", "pct", "percent", "ratio"}
+        _MONEY_KEYS = {"gmv", "revenue", "price", "amount", "payable", "value", "settlement", "refund"}
+
         def _fmt_val(k, v):
-            if isinstance(v, (int, float)):
-                return f"{round(v, 2)}%" if any(r in k.lower() for r in _RATE_KEYS) else _fmt(v)
-            return str(v)
+            if not isinstance(v, (int, float)):
+                return str(v)
+            k_lower = k.lower()
+            if any(r in k_lower for r in _RATE_KEYS):
+                return f"{round(v, 2)}%"
+            if any(m in k_lower for m in _MONEY_KEYS):
+                return _fmt(v)
+            return str(round(v, 2))  # plain number — no ₹, no %
+
+        # Build column type legend so LLM knows exactly what each column means
+        if rows:
+            col_legend = []
+            for k in rows[0].keys():
+                k_lower = k.lower()
+                if any(r in k_lower for r in _RATE_KEYS):
+                    col_legend.append(f"{k} = percentage (use % symbol)")
+                elif any(m in k_lower for m in _MONEY_KEYS):
+                    col_legend.append(f"{k} = money in INR (use ₹ symbol)")
+                else:
+                    col_legend.append(f"{k} = count or label (no symbol)")
+            col_legend_text = "Column types: " + ", ".join(col_legend)
+        else:
+            col_legend_text = ""
 
         raw_data_text = "\n".join(
             "  " + ", ".join(f"{k}: {_fmt_val(k, v)}" for k, v in row.items())
             for row in rows[:10]
         )
 
+        # Fix top_contributors formatting too
+        top_text = ", ".join(
+            f"{c['label']} ({_fmt_val(stats.get('numeric_col', ''), c['value'])})"
+            for c in contributors[:3]
+        ) if contributors else "N/A"
+
         prompt = _MULTI_PROMPT.format(
             question=question,
+            col_legend=col_legend_text,
             raw_data=raw_data_text,
             top_contributors=top_text,
             anomaly=anomaly or "nothing unusual",
             row_count=row_count,
         )
 
-    for model in ("llama-3.3-70b-versatile", "llama-3.1-8b-instant", "gemma2-9b-it"):
+    for model in ("llama-3.1-8b-instant", "llama-3.3-70b-versatile", "gemma2-9b-it"):
         try:
             resp = _call_with_retry(lambda m=model: _client.chat.completions.create(
                 model=m,

@@ -322,7 +322,7 @@ def run(question: str, session_id: str = "default", skip_insight: bool = False) 
         try:
             from core.insight_engine import _client, _call_with_retry
             resp = _call_with_retry(lambda: _client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
+                model="llama-3.1-8b-instant",
                 messages=[{
                     "role": "system",
                     "content": "You are QueryMind, a friendly AI analytics assistant for an Indian ecommerce company. Respond naturally to greetings in 1-2 sentences. Always mention you can help with business data questions. Be warm and conversational."
@@ -337,9 +337,24 @@ def run(question: str, session_id: str = "default", skip_insight: bool = False) 
         except Exception:
             greeting_msg = "Hey! I'm QueryMind, your AI analytics assistant. Ask me anything about your business data!"
 
+        # Preserve session context so next query still has follow-up context
+        update_session(session_id, question, "", [], "greeting", [], session.get("last_context", {}))
         return {
             "sql": "", "reasoning": "", "confidence": "HIGH",
             "insight": greeting_msg,
+            "rows": [], "row_count": 0, "chunks_used": [],
+            "validation": {"valid": True, "errors": [], "warnings": []},
+            "metric": None, "stats": {}, "data_validation": {"mismatch": False},
+            "intent": intent, "plan": {}, "session_id": session_id,
+            "clarification_needed": False, "note": "",
+        }
+
+    # ── Step 1c: Handle off-topic queries ────────────────────────────────────
+    if intent.get("operation") == "offtopic":
+        update_session(session_id, question, "", [], "offtopic", [], session.get("last_context", {}))
+        return {
+            "sql": "", "reasoning": "", "confidence": "HIGH",
+            "insight": "I can only help with business data questions — like sales, revenue, orders, returns, customers, and products. Try asking something like 'Top 5 brands by GMV this month' or 'Return rate by category'.",
             "rows": [], "row_count": 0, "chunks_used": [],
             "validation": {"valid": True, "errors": [], "warnings": []},
             "metric": None, "stats": {}, "data_validation": {"mismatch": False},
@@ -403,9 +418,15 @@ def run(question: str, session_id: str = "default", skip_insight: bool = False) 
             full_context = "PREVIOUS SQL FAILED RULES:\n" + "\n".join(validation["errors"]) + "\n\n" + full_context
             continue
 
-        # 6c. SQL critic (LLM second pass)
-        critic    = critique(gen["sql"])
-        candidate = critic["fixed_sql"] or gen["sql"]
+        # 6c. SQL critic — only run for complex queries (saves ~8s on simple ones)
+        is_complex = bool(intent.get("filters") or intent.get("dual_metrics") or
+                         intent.get("operation") in ("compare", "top_n", "bottom_n"))
+        critic = {"reason": "", "fixed_sql": None}  # safe default
+        if is_complex:
+            critic    = critique(gen["sql"])
+            candidate = critic["fixed_sql"] or gen["sql"]
+        else:
+            candidate = gen["sql"]
 
         # Safety-check critic output too
         safety2 = safety_enforce(candidate)
@@ -477,8 +498,14 @@ def run(question: str, session_id: str = "default", skip_insight: bool = False) 
 
     # ── Step 11: Insight ─────────────────────────────────────────────────────
     insight = ""
-    if not skip_insight and exec_result.get("rows") and not dv["mismatch"]:
-        insight = generate_insight(question, stats)
+    if not skip_insight:
+        if exec_result.get("rows") and not dv["mismatch"]:
+            try:
+                insight = generate_insight(question, stats)
+            except Exception:
+                insight = f"Query executed successfully. {exec_result['count']} row(s) returned."
+        if not insight:
+            insight = note or "Query executed. No data returned for the given filters — try a broader date range."
 
     # ── Step 12: Session context ─────────────────────────────────────────────
     structured_context = {

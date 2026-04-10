@@ -30,7 +30,7 @@ async def visualize_data(req: VisualizeRequest):
         all_cols = []
         if rows:
             for k, v in rows[0].items():
-                dtype = "numeric" if isinstance(v, (int, float)) else "date" if "date" in k.lower() else "text"
+                dtype = "numeric" if isinstance(v, (int, float)) else "date" if "date" in k.lower() or "time" in k.lower() else "text"
                 all_cols.append({"name": k, "dtype": dtype})
         rec = recommend(all_cols, rows[:100])
         return {

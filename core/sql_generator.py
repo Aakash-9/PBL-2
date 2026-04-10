@@ -63,16 +63,20 @@ You MUST strictly follow ALL rules below. No exceptions.
    NEVER use 'Online', 'UPI', 'Card', 'Wallet', 'Netbanking' — they do not exist
 6. Category values in DB are ONLY: 'Footwear', 'Accessories', 'Dresses', 'Topwear', 'Bottomwear'
 7. Order status values: 'Delivered', 'Shipped', 'Cancelled', 'Processing'
-8. NEVER add WHERE clauses not in the plan
-9. NEVER interpret time words (last, this, next) as city names
+8. Gender values are EXACTLY: 'Male' and 'Female' — NEVER lowercase
+9. NEVER add WHERE clauses not in the plan
+10. NEVER interpret time words (last, this, next) as city names
 
 ═══ OUTPUT RULES ═══
-10. ALWAYS show seller_name (not seller_id) — JOIN sellers s ON oi.seller_id = s.seller_id
-11. ALWAYS show customer city/name (not customer_id) when customer info needed
-12. For dynamic month intervals: o.order_date >= date_trunc('month', current_date - interval 'N months')
-13. COALESCE all aggregated columns for null safety
-14. GROUP BY all non-aggregated selected columns
-15. Use NULLIF for all divisions to prevent divide-by-zero
+11. ALWAYS show seller_name (not seller_id) — JOIN sellers s ON oi.seller_id = s.seller_id
+12. ALWAYS show customer city/name (not customer_id) when customer info needed
+13. For dynamic month intervals: o.order_date >= date_trunc('month', current_date - interval 'N months')
+14. For 'this year' filter: use EXTRACT(year FROM o.order_date) = EXTRACT(year FROM current_date) — NEVER use date_trunc for year equality
+15. COALESCE all aggregated columns for null safety
+15. GROUP BY all non-aggregated selected columns
+16. Use NULLIF for all divisions to prevent divide-by-zero
+17. For return rate queries: add HAVING COUNT(oi.order_item_id) >= 3 as a minimal sanity filter only — do NOT use higher thresholds as they will filter out all results on narrow queries
+18. For 'order value above X' filter: use oi.item_price >= X (not o.total_amount) since total_amount includes all items in an order
 
 ═══ EXACT DATABASE SCHEMA ═══
 - customers: customer_id, signup_date, city, state, gender, age_group, loyalty_tier, preferred_payment_mode, risk_score, is_active
@@ -163,6 +167,7 @@ def generate_sql(user_query: str, context: str, session_history: list = None,
             messages=messages,
             temperature=0.0,
             max_tokens=1024,
+            seed=42,
         ))
     except RuntimeError as e:
         if "DAILY_LIMIT_EXCEEDED" in str(e):
@@ -224,7 +229,7 @@ Result (first 10 rows): {result_rows[:10]}
 Write ONLY the insight. No preamble."""
 
     response = client.chat.completions.create(
-        model="llama3.1-8b",
+        model="llama-3.1-8b-instant",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.2,
         max_tokens=300,
@@ -251,7 +256,7 @@ Respond ONLY with JSON:
   "reason": "one sentence"}}"""
 
     response = client.chat.completions.create(
-        model="llama3.1-8b",
+        model="llama-3.1-8b-instant",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.0,
         max_tokens=200,

@@ -14,13 +14,13 @@ time_filters:
     sql: "o.order_date >= current_date - interval '30 days'"
 
   this_month:
-    sql: "date_trunc('month', o.order_date) = date_trunc('month', current_date)"
+    sql: "EXTRACT(year FROM o.order_date) = EXTRACT(year FROM current_date) AND EXTRACT(month FROM o.order_date) = EXTRACT(month FROM current_date)"
 
   last_month:
-    sql: "date_trunc('month', o.order_date) = date_trunc('month', current_date - interval '1 month')"
+    sql: "EXTRACT(year FROM o.order_date) = EXTRACT(year FROM current_date - interval '1 month') AND EXTRACT(month FROM o.order_date) = EXTRACT(month FROM current_date - interval '1 month')"
 
   this_year:
-    sql: "date_trunc('year', o.order_date) = date_trunc('year', current_date)"
+    sql: "EXTRACT(year FROM o.order_date) = EXTRACT(year FROM current_date)"
 
   last_quarter:
     sql: "o.order_date >= date_trunc('quarter', current_date - interval '3 months') AND o.order_date < date_trunc('quarter', current_date)"

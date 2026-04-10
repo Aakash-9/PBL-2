@@ -14,8 +14,8 @@ TEXT_TYPES    = {"character varying", "varchar", "text", "char", "character", "b
 
 def _classify(dtype: str) -> str:
     dtype = dtype.lower()
-    if dtype in NUMERIC_TYPES:    return "numeric"
-    if dtype in DATE_TYPES:       return "date"
+    if dtype in NUMERIC_TYPES or dtype == "numeric": return "numeric"
+    if dtype in DATE_TYPES or dtype == "date":       return "date"
     return "categorical"
 
 

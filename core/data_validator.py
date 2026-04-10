@@ -18,11 +18,17 @@ from core.supabase_client import execute_sql
 _YAML_PATH = os.path.join(os.path.dirname(__file__), "..", "yaml", "metric_glossary.yaml")
 _TIME_PATH  = os.path.join(os.path.dirname(__file__), "..", "yaml", "time_filter_governance.yaml")
 
-with open(_YAML_PATH) as f:
-    _METRICS = yaml.safe_load(f) or {}
+try:
+    with open(_YAML_PATH) as f:
+        _METRICS = yaml.safe_load(f) or {}
+except Exception:
+    _METRICS = {}
 
-with open(_TIME_PATH) as f:
-    _TIME_FILTERS = (yaml.safe_load(f) or {}).get("time_filters", {})
+try:
+    with open(_TIME_PATH) as f:
+        _TIME_FILTERS = (yaml.safe_load(f) or {}).get("time_filters", {})
+except Exception:
+    _TIME_FILTERS = {}
 
 # Tolerance: results within 0.1% are considered matching
 _TOLERANCE = 0.001

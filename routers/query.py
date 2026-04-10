@@ -17,4 +17,11 @@ class QueryRequest(BaseModel):
 
 @router.post("/query")
 async def nl_to_sql(req: QueryRequest):
-    return run(req.question, req.session_id, req.skip_insight)
+    try:
+        return run(req.question, req.session_id, req.skip_insight)
+    except Exception as e:
+        return {
+            "insight": f"⚠️ Backend error: {str(e)}",
+            "sql": "", "reasoning": "", "rows": [],
+            "confidence": "LOW", "error": str(e)
+        }

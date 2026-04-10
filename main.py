@@ -10,12 +10,17 @@ import uvicorn
 
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
+# Build allowed origins list
+_origins = ["http://localhost:3000", "http://localhost:3001"]
+if FRONTEND_URL and FRONTEND_URL != "*":
+    _origins.append(FRONTEND_URL)
+
 app = FastAPI(title="QueryMind NL2SQL API", version="2.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_URL, "http://localhost:3000"],
-    allow_credentials=True,
+    allow_origins=_origins if FRONTEND_URL != "*" else ["*"],
+    allow_credentials=FRONTEND_URL != "*",
     allow_methods=["*"],
     allow_headers=["*"],
 )

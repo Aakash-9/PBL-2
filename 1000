@@ -1,0 +1,1 @@
+{'success': False, 'error': "{'code': '42804', 'details': None, 'hint': None, 'message': 'argument of AND must be type boolean, not type numeric'}", 'rows': [], 'count': 0}
