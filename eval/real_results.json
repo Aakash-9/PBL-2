@@ -1,0 +1,461 @@
+{
+  "summary": {
+    "total": 45,
+    "ex": 77.8,
+    "da": 61.5,
+    "ia": 77.8,
+    "avg_latency": 20.3
+  },
+  "results": [
+    {
+      "query": "GMV last month",
+      "category": "simple",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "HIGH",
+      "rows": 1,
+      "latency": 9.9
+    },
+    {
+      "query": "Total orders this year",
+      "category": "simple",
+      "ex": true,
+      "da": true,
+      "ia": true,
+      "conf": "HIGH",
+      "rows": 1,
+      "latency": 1.8
+    },
+    {
+      "query": "Average order value this year",
+      "category": "simple",
+      "ex": false,
+      "da": false,
+      "ia": false,
+      "conf": "LOW",
+      "rows": 0,
+      "latency": 6.7
+    },
+    {
+      "query": "GMV last 6 months",
+      "category": "simple",
+      "ex": true,
+      "da": false,
+      "ia": true,
+      "conf": "LOW",
+      "rows": 1,
+      "latency": 25.9
+    },
+    {
+      "query": "Return rate this year",
+      "category": "simple",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "MEDIUM",
+      "rows": 0,
+      "latency": 17.0
+    },
+    {
+      "query": "Active sellers this year",
+      "category": "simple",
+      "ex": false,
+      "da": null,
+      "ia": false,
+      "conf": "LOW",
+      "rows": 0,
+      "latency": 47.5
+    },
+    {
+      "query": "Unique customers last 6 months",
+      "category": "simple",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "HIGH",
+      "rows": 1,
+      "latency": 17.0
+    },
+    {
+      "query": "Net revenue last quarter",
+      "category": "simple",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "MEDIUM",
+      "rows": 1,
+      "latency": 29.7
+    },
+    {
+      "query": "Total quantity sold this year",
+      "category": "simple",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "MEDIUM",
+      "rows": 1,
+      "latency": 31.2
+    },
+    {
+      "query": "GMV last quarter",
+      "category": "simple",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "HIGH",
+      "rows": 1,
+      "latency": 14.7
+    },
+    {
+      "query": "Top 5 cities by revenue",
+      "category": "dimensional",
+      "ex": true,
+      "da": true,
+      "ia": true,
+      "conf": "HIGH",
+      "rows": 5,
+      "latency": 13.1
+    },
+    {
+      "query": "GMV by category",
+      "category": "dimensional",
+      "ex": true,
+      "da": true,
+      "ia": true,
+      "conf": "MEDIUM",
+      "rows": 5,
+      "latency": 20.6
+    },
+    {
+      "query": "Top 5 brands by GMV",
+      "category": "dimensional",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "HIGH",
+      "rows": 5,
+      "latency": 13.9
+    },
+    {
+      "query": "Orders by payment mode",
+      "category": "dimensional",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "MEDIUM",
+      "rows": 2,
+      "latency": 0.8
+    },
+    {
+      "query": "GMV by gender",
+      "category": "dimensional",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "MEDIUM",
+      "rows": 3,
+      "latency": 9.8
+    },
+    {
+      "query": "Top 3 states by order count",
+      "category": "dimensional",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "HIGH",
+      "rows": 3,
+      "latency": 18.5
+    },
+    {
+      "query": "Revenue by order channel",
+      "category": "dimensional",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "LOW",
+      "rows": 3,
+      "latency": 30.9
+    },
+    {
+      "query": "Top 10 products by quantity sold",
+      "category": "dimensional",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "MEDIUM",
+      "rows": 2000,
+      "latency": 30.8
+    },
+    {
+      "query": "Bottom 5 sellers by revenue this year",
+      "category": "dimensional",
+      "ex": false,
+      "da": null,
+      "ia": false,
+      "conf": "LOW",
+      "rows": 0,
+      "latency": 39.1
+    },
+    {
+      "query": "Return rate by category last 6 months",
+      "category": "dimensional",
+      "ex": false,
+      "da": false,
+      "ia": false,
+      "conf": "LOW",
+      "rows": 0,
+      "latency": 51.6
+    },
+    {
+      "query": "Top 5 footwear brands where payment is COD",
+      "category": "complex",
+      "ex": false,
+      "da": false,
+      "ia": false,
+      "conf": "LOW",
+      "rows": 0,
+      "latency": 0.0
+    },
+    {
+      "query": "GMV for footwear last 6 months where price above 1000",
+      "category": "complex",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "MEDIUM",
+      "rows": 0,
+      "latency": 19.5
+    },
+    {
+      "query": "which top 3 sellers had the most returns last quarter and what was their return rate",
+      "category": "complex",
+      "ex": false,
+      "da": null,
+      "ia": false,
+      "conf": "LOW",
+      "rows": 0,
+      "latency": 53.6
+    },
+    {
+      "query": "Average order value for accessories where payment is Prepaid",
+      "category": "complex",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "LOW",
+      "rows": 1,
+      "latency": 31.5
+    },
+    {
+      "query": "Top 5 brands by revenue for female customers this year",
+      "category": "complex",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "HIGH",
+      "rows": 5,
+      "latency": 11.1
+    },
+    {
+      "query": "Top 5 cities by revenue for male customers last year",
+      "category": "complex",
+      "ex": false,
+      "da": null,
+      "ia": false,
+      "conf": "LOW",
+      "rows": 0,
+      "latency": 45.5
+    },
+    {
+      "query": "Top 3 sellers by GMV for footwear this year",
+      "category": "complex",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "HIGH",
+      "rows": 3,
+      "latency": 17.8
+    },
+    {
+      "query": "GMV by category where payment is COD",
+      "category": "complex",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "MEDIUM",
+      "rows": 5,
+      "latency": 16.9
+    },
+    {
+      "query": "Top 5 cities by return rate for footwear above 1000 last 6 months",
+      "category": "complex",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "HIGH",
+      "rows": 5,
+      "latency": 17.9
+    },
+    {
+      "query": "Top 5 brands by revenue where payment is Prepaid this year",
+      "category": "complex",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "HIGH",
+      "rows": 5,
+      "latency": 16.9
+    },
+    {
+      "query": "Compare GMV this month vs last month",
+      "category": "comparison",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "HIGH",
+      "rows": 1,
+      "latency": 16.1
+    },
+    {
+      "query": "Compare order count this quarter vs last quarter",
+      "category": "comparison",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "HIGH",
+      "rows": 2,
+      "latency": 17.1
+    },
+    {
+      "query": "Compare return rate this year vs last year",
+      "category": "comparison",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "MEDIUM",
+      "rows": 0,
+      "latency": 17.2
+    },
+    {
+      "query": "GMV last month",
+      "category": "followup",
+      "ex": true,
+      "da": true,
+      "ia": true,
+      "conf": "MEDIUM",
+      "rows": 0,
+      "latency": 15.7
+    },
+    {
+      "query": "same for Mumbai",
+      "category": "followup",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "MEDIUM",
+      "rows": 0,
+      "latency": 19.0
+    },
+    {
+      "query": "Top 5 cities by revenue",
+      "category": "followup",
+      "ex": true,
+      "da": true,
+      "ia": true,
+      "conf": "HIGH",
+      "rows": 5,
+      "latency": 14.3
+    },
+    {
+      "query": "same for last month",
+      "category": "followup",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "MEDIUM",
+      "rows": 0,
+      "latency": 17.8
+    },
+    {
+      "query": "Average order value by category",
+      "category": "followup",
+      "ex": false,
+      "da": null,
+      "ia": false,
+      "conf": "LOW",
+      "rows": 0,
+      "latency": 54.1
+    },
+    {
+      "query": "same but this year",
+      "category": "followup",
+      "ex": false,
+      "da": null,
+      "ia": false,
+      "conf": "LOW",
+      "rows": 0,
+      "latency": 49.3
+    },
+    {
+      "query": "Return rate last 30 days",
+      "category": "followup",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "MEDIUM",
+      "rows": 0,
+      "latency": 16.8
+    },
+    {
+      "query": "same for footwear",
+      "category": "followup",
+      "ex": true,
+      "da": null,
+      "ia": true,
+      "conf": "MEDIUM",
+      "rows": 0,
+      "latency": 13.0
+    },
+    {
+      "query": "hello",
+      "category": "edge",
+      "ex": true,
+      "da": true,
+      "ia": true,
+      "conf": "HIGH",
+      "rows": 0,
+      "latency": 0.3
+    },
+    {
+      "query": "how are you",
+      "category": "edge",
+      "ex": false,
+      "da": false,
+      "ia": false,
+      "conf": "LOW",
+      "rows": 0,
+      "latency": 0.0
+    },
+    {
+      "query": "top products",
+      "category": "edge",
+      "ex": true,
+      "da": true,
+      "ia": true,
+      "conf": "LOW",
+      "rows": 0,
+      "latency": 0.0
+    },
+    {
+      "query": "show me data",
+      "category": "edge",
+      "ex": true,
+      "da": true,
+      "ia": true,
+      "conf": "LOW",
+      "rows": 0,
+      "latency": 0.0
+    }
+  ]
+}

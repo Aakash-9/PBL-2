@@ -135,9 +135,11 @@ def build(intent: dict) -> dict:
         if time_sql:
             where.append(time_sql)
         elif dynamic_interval:
-            # Synthetic key like "last_5_months" — build SQL directly
-            # For month-based intervals, use date_trunc for consistency with data validator
-            if "month" in dynamic_interval:
+            # Synthetic key like "last_5_months" or "year_2024"
+            if dynamic_interval.startswith("year "):
+                year = dynamic_interval.split()[1]
+                where.append(f"EXTRACT(YEAR FROM o.order_date) = {year}")
+            elif "month" in dynamic_interval:
                 where.append(f"o.order_date >= date_trunc('month', current_date - interval '{dynamic_interval}')")
             else:
                 where.append(f"o.order_date >= current_date - interval '{dynamic_interval}'")

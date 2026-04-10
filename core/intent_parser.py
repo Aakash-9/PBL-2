@@ -112,6 +112,8 @@ def parse(question: str, last_context: dict | None = None) -> dict:
     if time_filter is None:
         m_mo = re.search(r"\blast\s*(\d+)\s*months?\b", q)
         m_dy = re.search(r"\blast\s*(\d+)\s*days?\b", q)
+        # Specific year detection (e.g. "2024", "in 2023")
+        m_yr = re.search(r"\b(20\d{2})\b", q)
         if m_mo:
             n = int(m_mo.group(1))
             dynamic_interval = f"{n} months"
@@ -120,6 +122,10 @@ def parse(question: str, last_context: dict | None = None) -> dict:
             n = int(m_dy.group(1))
             dynamic_interval = f"{n} days"
             time_filter = f"last_{n}_days"
+        elif m_yr:
+            year = m_yr.group(1)
+            time_filter = f"year_{year}"
+            dynamic_interval = f"year {year}"
 
     if time_filter is None and is_followup and last.get("time_filter"):
         time_filter = last["time_filter"]

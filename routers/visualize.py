@@ -1,7 +1,6 @@
-# routers/visualize.py
 from fastapi import APIRouter
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Any
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from core.supabase_client import get_multi_table_data, get_column_sample
@@ -17,6 +16,7 @@ class ColumnSelection(BaseModel):
 class VisualizeRequest(BaseModel):
     selections: List[ColumnSelection]
     limit: int = 500
+    rows: Optional[List[Any]] = None  # pre-fetched rows from /api/query
 
 class RecommendRequest(BaseModel):
     columns: List[dict]
@@ -24,7 +24,21 @@ class RecommendRequest(BaseModel):
 
 @router.post("/visualize")
 async def visualize_data(req: VisualizeRequest):
-    """Fetch data for selected columns, auto-recommend chart type."""
+    # If rows are passed directly, skip DB fetch
+    if req.rows:
+        rows = req.rows
+        all_cols = []
+        if rows:
+            for k, v in rows[0].items():
+                dtype = "numeric" if isinstance(v, (int, float)) else "date" if "date" in k.lower() else "text"
+                all_cols.append({"name": k, "dtype": dtype})
+        rec = recommend(all_cols, rows[:100])
+        return {
+            "rows": rows, "count": len(rows),
+            "recommendation": rec, "columns": all_cols,
+            "success": True, "error": None,
+        }
+
     selections_dicts = [s.dict() for s in req.selections]
     result = get_multi_table_data(selections_dicts, req.limit)
 
@@ -46,15 +60,8 @@ async def visualize_data(req: VisualizeRequest):
 
 @router.post("/recommend")
 async def get_recommendation(req: RecommendRequest):
-    """Rule-based + LLM viz recommendation for selected columns."""
     rule_rec = recommend(req.columns, req.sample_data or [])
-
     llm_rec = None
     if req.sample_data:
         llm_rec = recommend_visualization(req.columns, req.sample_data)
-
-    return {
-        "rule_based": rule_rec,
-        "llm_based": llm_rec,
-        "best": rule_rec["best"],
-    }
+    return {"rule_based": rule_rec, "llm_based": llm_rec, "best": rule_rec["best"]}

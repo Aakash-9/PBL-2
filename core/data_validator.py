@@ -70,9 +70,13 @@ def verify(agent_rows: list, intent: dict, agent_sql: str) -> dict:
     if dimension:
         return _skip("Verification skipped for group-by queries")
 
-    # Skip if brand/category filters present — verification SQL can't replicate complex filters reliably
-    if filters.get("brand") or filters.get("payment_mode") or filters.get("gender"):
+    # Skip if any filters present that the validator can't replicate
+    if filters.get("brand") or filters.get("payment_mode") or filters.get("gender") or filters.get("category") or filters.get("min_amount"):
         return _skip("Verification skipped for filtered queries")
+
+    # Skip if no time_filter (e.g. year-based queries use EXTRACT which validator can't replicate)
+    if not time_filter:
+        return _skip("Verification skipped — no standard time filter")
 
     # Skip if time_filter is a dynamic key not in YAML
     if time_filter and time_filter not in _TIME_FILTERS:

@@ -96,9 +96,14 @@ def _compute_confidence(validation: dict, attempts: int,
         return "MEDIUM"
     if row_count == 0:
         return "MEDIUM"
-    if intent.get("time_filter") is None and intent.get("operation") == "aggregate":
-        return "MEDIUM"
-    return "HIGH"
+    # HIGH if any time filter or filters are present (query is specific enough)
+    if intent.get("time_filter") or intent.get("filters"):
+        return "HIGH"
+    if intent.get("operation") in ("top_n", "bottom_n", "compare"):
+        return "HIGH"
+    if intent.get("dimension"):
+        return "HIGH"
+    return "MEDIUM"
 
 
 def _run_single(question: str, intent: dict, session: dict,

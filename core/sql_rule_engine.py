@@ -96,15 +96,18 @@ def validate(sql: str) -> dict:
 
     # Rule 6: Validate JOIN ON conditions
     join_on_pattern = re.compile(
-        r"join\s+\S+\s+\w+\s+on\s+(.+?)(?=\s+(?:join|where|group|order|limit|$))",
+        r"join\s+\S+\s+\w+\s+on\s+(.+?)(?=\s+(?:left|inner|outer|cross|join|where|group|order|limit|having|union|$))",
         re.IGNORECASE | re.DOTALL
     )
     for match in join_on_pattern.finditer(sql):
-        condition = re.sub(r"\s+", " ", match.group(1).strip().lower().split("\n")[0])
+        # Only take the first line of the condition (before AND/OR)
+        raw_cond = match.group(1).strip()
+        first_cond = re.split(r'\s+(?:AND|OR)\s+', raw_cond, maxsplit=1)[0].strip()
+        condition = re.sub(r"\s+", " ", first_cond.lower().split("\n")[0])
         normalised = _normalise_condition(condition, tables_in_query)
         if normalised and normalised not in _VALID_CONDITIONS:
             if not _is_plausible_condition(condition, tables_in_query):
-                errors.append(f"Invalid JOIN condition: '{condition}' — not in approved join paths")
+                errors.append(f"Invalid JOIN condition: '{condition}'  not in approved join paths")
 
     # Rule 7: Unknown column references
     col_ref_pattern = re.compile(r"\b(\w+)\.(\w+)\b")

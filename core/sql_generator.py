@@ -17,7 +17,7 @@ else:
         api_key=os.environ.get("CEREBRAS_API_KEY", ""),
         base_url="https://api.groq.com/openai/v1",
     )
-    DEFAULT_MODEL = "llama-3.1-8b-instant"
+    DEFAULT_MODEL = "llama-3.3-70b-versatile"
 
 
 def _call_with_retry(fn, max_retries=3, base_wait=5):
@@ -103,7 +103,8 @@ SQL:
 - Always alias: orders=o, order_items=oi, products=p, sellers=s, customers=c, payments=pay, returns=ret, shipments=sh
 - ORDER BY the primary metric DESC
 - Use LIMIT 1000 unless a specific limit is requested
-- Use CTEs (WITH clause) for multi-step logic"""
+- Use CTEs (WITH clause) ONLY for UNION ALL period comparisons — NEVER for simple aggregates
+- For simple GMV/count/rate queries always write direct SELECT with JOINs, no CTEs"""
 
 
 def build_prompt(user_query: str, context: str, session_history: list = None,

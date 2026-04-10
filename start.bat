@@ -4,16 +4,19 @@ echo Starting QueryMind...
 :: Start backend
 start "QueryMind Backend" cmd /k "cd /d %~dp0 && python main.py"
 
-:: Wait 4 seconds for backend to boot
-timeout /t 4 /nobreak >nul
+:: Wait for backend to boot
+timeout /t 5 /nobreak >nul
 
-:: Start frontend
-start "QueryMind Frontend" cmd /k "set PATH=C:\Program Files\nodejs;%PATH% && cd /d %~dp0frontend && npm run dev"
+:: Start Next.js frontend
+start "QueryMind Frontend" cmd /k "set PATH=C:\Program Files\nodejs;%PATH% && cd /d %~dp0querymind-master && npm run dev"
 
-:: Wait 3 seconds for vite to boot
-timeout /t 3 /nobreak >nul
+:: Wait for Next.js to boot
+timeout /t 5 /nobreak >nul
 
 :: Open browser
-start http://localhost:5173
+start http://localhost:3000
 
-echo Both servers started. Browser opening at http://localhost:5173
+echo.
+echo ✓ Backend  running at http://localhost:8000
+echo ✓ Frontend running at http://localhost:3000
+echo.
